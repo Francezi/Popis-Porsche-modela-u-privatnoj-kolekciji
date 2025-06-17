@@ -1,10 +1,24 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "funkcije.h"
 
+// Funkcija za unos broja s provjerom
+int unosBroja(const char* poruka) {
+    int broj;
+    char unos[20];
+    while (1) {
+        printf("%s", poruka);
+        fgets(unos, sizeof(unos), stdin);
+        if (sscanf(unos, "%d", &broj) == 1) {
+            return broj;
+        } else {
+            printf("Neispravan unos, pokusajte ponovo.\n");
+        }
+    }
+}
+
+// Funkcija za unos novog modela
 void unesiModel() {
     Porsche novi;
 
@@ -14,20 +28,13 @@ void unesiModel() {
     fgets(novi.model, sizeof(novi.model), stdin);
     novi.model[strcspn(novi.model, "\n")] = '\0';
 
-    printf("Godina proizvodnje: ");
-    scanf("%d", &novi.godina);
-    getchar();
-
+    novi.godina = unosBroja("Godina proizvodnje: ");
     printf("Boja: ");
     fgets(novi.boja, sizeof(novi.boja), stdin);
     novi.boja[strcspn(novi.boja, "\n")] = '\0';
 
-    printf("Konjske snage (KS): ");
-    scanf("%d", &novi.ks);
-
-    printf("Kilovati (kW): ");
-    scanf("%d", &novi.kw);
-    getchar();
+    novi.ks = unosBroja("Konjske snage (KS): ");
+    novi.kw = unosBroja("Kilovati (kW): ");
 
     FILE* fp = fopen(FILE_NAME, "a");
     if (!fp) {
@@ -41,6 +48,7 @@ void unesiModel() {
     printf("Model je uspjesno dodan!\n");
 }
 
+// Funkcija za prikazivanje svih modela
 void prikaziModele() {
     FILE* fp = fopen(FILE_NAME, "r");
     if (!fp) {
@@ -98,18 +106,21 @@ void prikaziModele() {
     free(modeli);
 }
 
-int usporediGodinu(const void* a, const void* b) {
-    const Porsche* p1 = (const Porsche*)a;
-    const Porsche* p2 = (const Porsche*)b;
-    return p2->godina - p1->godina;
-}
-
+// Funkcija za usporedbu modela po nazivu
 int usporediModel(const void* a, const void* b) {
     const Porsche* p1 = (const Porsche*)a;
     const Porsche* p2 = (const Porsche*)b;
     return strcmp(p1->model, p2->model);
 }
 
+// Funkcija za usporedbu godina proizvodnje
+int usporediGodinu(const void* a, const void* b) {
+    const Porsche* p1 = (const Porsche*)a;
+    const Porsche* p2 = (const Porsche*)b;
+    return p2->godina - p1->godina;
+}
+
+// Funkcija za pretragu modela u listi
 Porsche* nadjiModel(Porsche* modeli, int count, const char* trazeniModel) {
     Porsche key;
     strncpy(key.model, trazeniModel, MAX_MODEL);
@@ -117,6 +128,7 @@ Porsche* nadjiModel(Porsche* modeli, int count, const char* trazeniModel) {
     return (Porsche*)bsearch(&key, modeli, count, sizeof(Porsche), usporediModel);
 }
 
+// Funkcija za uređivanje modela
 void urediModel() {
     FILE* fp = fopen(FILE_NAME, "r");
     if (!fp) {
@@ -162,17 +174,12 @@ void urediModel() {
         return;
     }
 
-    // Sortiramo modele po nazivu
-    qsort(modeli, count, sizeof(Porsche), usporediModel);
-
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za uredivanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
     trazeniModel[strcspn(trazeniModel, "\n")] = '\0';
 
-    // Pretražujemo model pomoću bsearch-a
     Porsche* p = nadjiModel(modeli, count, trazeniModel);
-
     if (!p) {
         printf("Model nije pronadjen.\n");
         free(modeli);
@@ -183,20 +190,13 @@ void urediModel() {
     fgets(p->model, sizeof(p->model), stdin);
     p->model[strcspn(p->model, "\n")] = '\0';
 
-    printf("Nova godina proizvodnje: ");
-    scanf("%d", &p->godina);
-    getchar();
-
+    p->godina = unosBroja("Nova godina proizvodnje: ");
     printf("Nova boja: ");
     fgets(p->boja, sizeof(p->boja), stdin);
     p->boja[strcspn(p->boja, "\n")] = '\0';
 
-    printf("Nove konjske snage (KS): ");
-    scanf("%d", &p->ks);
-
-    printf("Novi kilovati (kW): ");
-    scanf("%d", &p->kw);
-    getchar();
+    p->ks = unosBroja("Nove konjske snage (KS): ");
+    p->kw = unosBroja("Novi kilovati (kW): ");
 
     FILE* fw = fopen(FILE_NAME, "w");
     if (!fw) {
@@ -219,6 +219,7 @@ void urediModel() {
     printf("Model je uspjesno azuriran.\n");
 }
 
+// Funkcija za brisanje modela
 void izbrisiModel() {
     FILE* fp = fopen(FILE_NAME, "r");
     if (!fp) {
@@ -264,17 +265,12 @@ void izbrisiModel() {
         return;
     }
 
-    // Sortiramo modele po nazivu
-    qsort(modeli, count, sizeof(Porsche), usporediModel);
-
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za brisanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
     trazeniModel[strcspn(trazeniModel, "\n")] = '\0';
 
-    // Pretražujemo model pomoću bsearch-a
     Porsche* p = nadjiModel(modeli, count, trazeniModel);
-
     if (!p) {
         printf("Model nije pronadjen.\n");
         free(modeli);
@@ -306,29 +302,4 @@ void izbrisiModel() {
     free(modeli);
 
     printf("Model je uspjesno obrisan.\n");
-}
-
-// Funkcija za brisanje datoteke
-void izbrisiDatoteku() {
-    if (remove(FILE_NAME) == 0) {
-        printf("Datoteka je uspjesno obrisana.\n");
-    }
-    else {
-        perror("Greska pri brisanju datoteke");
-    }
-}
-
-// Funkcija za preimenovanje datoteke
-void preimenujDatoteku() {
-    char novoIme[100];
-    printf("Unesi novo ime datoteke: ");
-    fgets(novoIme, sizeof(novoIme), stdin);
-    novoIme[strcspn(novoIme, "\n")] = '\0';
-
-    if (rename(FILE_NAME, novoIme) == 0) {
-        printf("Datoteka je uspjesno preimenovana u '%s'.\n", novoIme);
-    }
-    else {
-        perror("Greska pri preimenovanju datoteke");
-    }
 }

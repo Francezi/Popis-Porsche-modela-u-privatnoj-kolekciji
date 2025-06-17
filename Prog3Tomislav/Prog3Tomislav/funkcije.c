@@ -48,11 +48,28 @@ void prikaziModele() {
         return;
     }
 
-    Porsche modeli[5];
+    Porsche* modeli = malloc(5 * sizeof(Porsche));
+    if (!modeli) {
+        perror("Greska pri alokaciji memorije");
+        fclose(fp);
+        return;
+    }
+    int capacity = 5;
     int count = 0;
     char linija[200];
 
-    while (fgets(linija, sizeof(linija), fp) && count < 5) {
+    while (fgets(linija, sizeof(linija), fp)) {
+        if (count == capacity) {
+            capacity *= 2;
+            Porsche* temp = realloc(modeli, capacity * sizeof(Porsche));
+            if (!temp) {
+                perror("Greska pri realokaciji memorije");
+                free(modeli);
+                fclose(fp);
+                return;
+            }
+            modeli = temp;
+        }
         sscanf(linija, "%49[^|]|%d|%29[^|]|%d|%d",
             modeli[count].model,
             &modeli[count].godina,
@@ -65,16 +82,20 @@ void prikaziModele() {
 
     if (count == 0) {
         printf("Jos nema unesenih modela.\n");
+        free(modeli);
         return;
     }
 
-    qsort(modeli, count, sizeof(Porsche), usporediGodinu);
+    // Sortiramo modele po nazivu prije nego što pozovemo bsearch
+    qsort(modeli, count, sizeof(Porsche), usporediModel);
 
-    printf("\n--- Popis Porsche modela (sortirano po godini) ---\n");
+    printf("\n--- Popis Porsche modela ---\n");
     for (int i = 0; i < count; i++) {
         printf("Model: %s | Godina: %d | Boja: %s | KS: %d | kW: %d\n",
             modeli[i].model, modeli[i].godina, modeli[i].boja, modeli[i].ks, modeli[i].kw);
     }
+
+    free(modeli);
 }
 
 int usporediGodinu(const void* a, const void* b) {
@@ -141,11 +162,15 @@ void urediModel() {
         return;
     }
 
+    // Sortiramo modele po nazivu
+    qsort(modeli, count, sizeof(Porsche), usporediModel);
+
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za uredivanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
     trazeniModel[strcspn(trazeniModel, "\n")] = '\0';
 
+    // Pretražujemo model pomoću bsearch-a
     Porsche* p = nadjiModel(modeli, count, trazeniModel);
 
     if (!p) {
@@ -239,11 +264,15 @@ void izbrisiModel() {
         return;
     }
 
+    // Sortiramo modele po nazivu
+    qsort(modeli, count, sizeof(Porsche), usporediModel);
+
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za brisanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
     trazeniModel[strcspn(trazeniModel, "\n")] = '\0';
 
+    // Pretražujemo model pomoću bsearch-a
     Porsche* p = nadjiModel(modeli, count, trazeniModel);
 
     if (!p) {

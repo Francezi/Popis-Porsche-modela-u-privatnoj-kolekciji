@@ -1,44 +1,41 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "funkcije.h"
 
 int main() {
     int izbor;
 
-    do {
-        printf("\n--- Porsche kolekcija ---\n");
-        printf("1. Prikazi modele\n");
-        printf("2. Unesi novi model\n");
+    while (1) {
+        printf("\n--- Glavni izbornik ---\n");
+        printf("1. Unesi novi model\n");
+        printf("2. Prikazi modele\n");
         printf("3. Uredi model\n");
         printf("4. Izbrisi model\n");
         printf("5. Izlaz\n");
-        printf("Izbor: ");
-        scanf("%d", &izbor);
-        getchar();
+
+        izbor = unosBroja("Izbor: ");
 
         switch (izbor) {
-        case PRIKAZI:
-            prikaziModele();
-            break;
-        case UNESI:
-            unesiModel();
-            break;
-        case UREDI:
-            urediModel();
-            break;
-        case IZBRISI:
-            izbrisiModel();
-            break;
-        case IZLAZ:
-            printf("Dovidjenja!\n");
-            break;
-        default:
-            printf("Nepostojeca opcija, pokusajte ponovo.\n");
-            break;
+            case 1:
+                unesiModel();
+                break;
+            case 2:
+                prikaziModele();
+                break;
+            case 3:
+                urediModel();
+                break;
+            case 4:
+                izbrisiModel();
+                break;
+            case 5:
+                printf("Izlaz...\n");
+                return 0;
+            default:
+                printf("Nepoznata opcija, pokusajte ponovo.\n");
         }
-
-    } while (izbor != IZLAZ);
+    }
 
     return 0;
 }

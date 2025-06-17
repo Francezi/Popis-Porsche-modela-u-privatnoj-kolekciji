@@ -1,12 +1,11 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #ifndef FUNKCIJE_H
 #define FUNKCIJE_H
 
-#define FILE_NAME "porsche_baza.txt"
 #define MAX_MODEL 50
 #define MAX_BOJA 30
+#define FILE_NAME "porsche_models.txt"
 
+// Struktura za pohranu podataka o Porsche modelima
 typedef struct {
     char model[MAX_MODEL];
     int godina;
@@ -15,21 +14,14 @@ typedef struct {
     int kw;
 } Porsche;
 
-typedef enum {
-    PRIKAZI = 1,
-    UNESI,
-    UREDI,
-    IZBRISI,
-    IZLAZ
-} Izbornik;
-
+// Funkcije
 void unesiModel();
 void prikaziModele();
 void urediModel();
 void izbrisiModel();
-
-int usporediGodinu(const void* a, const void* b);
+int unosBroja(const char* poruka);
 int usporediModel(const void* a, const void* b);
+int usporediGodinu(const void* a, const void* b);
 Porsche* nadjiModel(Porsche* modeli, int count, const char* trazeniModel);
 
 #endif

@@ -38,7 +38,7 @@ void unesiModel() {
     fprintf(fp, "%s|%d|%s|%d|%d\n", novi.model, novi.godina, novi.boja, novi.ks, novi.kw);
     fclose(fp);
 
-    printf("Model je uspesno dodat!\n");
+    printf("Model je uspjesno dodan!\n");
 }
 
 void prikaziModele() {
@@ -141,8 +141,6 @@ void urediModel() {
         return;
     }
 
-    qsort(modeli, count, sizeof(Porsche), usporediModel);
-
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za uredivanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
@@ -241,8 +239,6 @@ void izbrisiModel() {
         return;
     }
 
-    qsort(modeli, count, sizeof(Porsche), usporediModel);
-
     char trazeniModel[MAX_MODEL];
     printf("Unesi model za brisanje: ");
     fgets(trazeniModel, sizeof(trazeniModel), stdin);
@@ -280,5 +276,5 @@ void izbrisiModel() {
     fclose(fw);
     free(modeli);
 
-    printf("Model je uspjesno izbrisan.\n");
+    printf("Model je uspjesno obrisan.\n");
 }

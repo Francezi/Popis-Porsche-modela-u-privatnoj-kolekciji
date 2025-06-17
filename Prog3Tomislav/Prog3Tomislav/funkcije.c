@@ -307,3 +307,28 @@ void izbrisiModel() {
 
     printf("Model je uspjesno obrisan.\n");
 }
+
+// Funkcija za brisanje datoteke
+void izbrisiDatoteku() {
+    if (remove(FILE_NAME) == 0) {
+        printf("Datoteka je uspjesno obrisana.\n");
+    }
+    else {
+        perror("Greska pri brisanju datoteke");
+    }
+}
+
+// Funkcija za preimenovanje datoteke
+void preimenujDatoteku() {
+    char novoIme[100];
+    printf("Unesi novo ime datoteke: ");
+    fgets(novoIme, sizeof(novoIme), stdin);
+    novoIme[strcspn(novoIme, "\n")] = '\0';
+
+    if (rename(FILE_NAME, novoIme) == 0) {
+        printf("Datoteka je uspjesno preimenovana u '%s'.\n", novoIme);
+    }
+    else {
+        perror("Greska pri preimenovanju datoteke");
+    }
+}

@@ -5,7 +5,6 @@
 #define MAX_BOJA 30
 #define FILE_NAME "porsche_models.txt"
 
-// Struktura za pohranu podataka o Porsche modelima
 typedef struct {
     char model[MAX_MODEL];
     int godina;
@@ -14,14 +13,16 @@ typedef struct {
     int kw;
 } Porsche;
 
-// Funkcije
+// Funkcije koje će se implementirati u funkcije.c
 void unesiModel();
 void prikaziModele();
 void urediModel();
 void izbrisiModel();
-int unosBroja(const char* poruka);
+
+// Pomocna funkcija za usporedbu modela
 int usporediModel(const void* a, const void* b);
-int usporediGodinu(const void* a, const void* b);
-Porsche* nadjiModel(Porsche* modeli, int count, const char* trazeniModel);
+
+// Funkcija za provjeru dupliciranja modela
+int provjeriDupliciraniModel(Porsche* modeli, int count, const char* trazeniModel);
 
 #endif
